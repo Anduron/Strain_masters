@@ -1,0 +1,10 @@
+property_name feat_num property component SHAP
+dp_p50 2 2 0.49840733
+dp_sum 8 2 0.48696893
+dp_p75 1 2 0.40990943
+dp_std 6 2 0.33793417
+dp_mean 3 2 0.21363969
+dp_num 7 2 0.18757288
+dp_p10 5 2 0.12889181
+dp_p25 4 2 0.1277114
+dp_p90 0 2 0.118639156

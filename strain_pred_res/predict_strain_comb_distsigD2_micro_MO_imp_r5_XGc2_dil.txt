@@ -1,0 +1,10 @@
+property_name property component importance confidence
+dp_p50 2 2 0.36531234
+dp_mean 3 2 0.17526051
+dp_p90 0 2 0.16762389
+dp_p10 5 2 0.060988214
+dp_p25 4 2 0.055830397
+dp_num 7 2 0.051162496
+dp_std 6 2 0.050221596
+dp_sum 8 2 0.04315077
+dp_p75 1 2 0.03044979

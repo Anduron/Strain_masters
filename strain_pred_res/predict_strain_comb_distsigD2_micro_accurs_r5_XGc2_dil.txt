@@ -1,0 +1,2 @@
+exp lim num_train num_test rmse_train r2_train rmse_test r2_test 
+1 1.00 7693 1862 20.13 0.54 20.87 0.49 
