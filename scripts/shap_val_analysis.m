@@ -31,24 +31,24 @@ for i = 1: length(plot_list)
     TF = contains(experiment_name,plot_list(i));
     temp = [];
     counter = 0;
-    
+
     for i = 1: length(experiment_name)
-        
-        
+
+
         if TF(i) == 1
             counter = counter + 1;
             datastring = append('Shap_vals_xgb_',experiment_name(i),'_g',string(rad),'0.txt');
-            
+
             SH = readtable(append(result_directory,datastring));
-            
+
             temp = [temp; transpose(table2array(SH(:,2))) ];
-            
+
         end
-        
+
     end
     shap_vals = [shap_vals;mean(temp,1)];
-    
-    
+
+
 end
 
 shap_vals = normalize(shap_vals,2,'range');
@@ -71,7 +71,7 @@ ylabel('Importance');
 title('Contraction Features') %title('SHAP feature importance for contraction features')
 %legend(short);
 set(gca,'FontSize',16,'LineWidth',2,'Xtick',[0.5:8.5],'XTickLabel',stat,'XTickLabelRotation',45)
-    
+
 hold on
 %subplot(3,1,2)
 ax = nexttile;
@@ -84,7 +84,7 @@ ylabel('Importance');
 title('Dilation Features') %title('SHAP feature importance for dilation features')
 %legend(short);
 set(gca,'FontSize',16,'LineWidth',2,'Xtick',[0.5:8.5],'XTickLabel',stat,'XTickLabelRotation',45)
-    
+
 hold on
 %subplot(3,1,3)
 ax = nexttile;
@@ -97,9 +97,9 @@ ylabel('Importance');
 title('Shear Features') %title('SHAP feature importance for shear features')
 %legend(short);
 set(gca,'FontSize',16,'LineWidth',2,'Xtick',[0.5:8.5],'XTickLabel',stat,'XTickLabelRotation',45)
-    
+
 hold on
-sgt = sgtitle('SHAP Feature Importance for Strain Components');
+sgt = sgtitle('SHAP Values for Strain Components');
 sgt.FontSize = 18;
 
 %end
@@ -127,12 +127,12 @@ for i = 1: length(experiment_name)
     %TF = contains(experiment_name,plot_list(i));
     %temp = [];
     %counter = 0;
-    
+
     datastring = append('Shap_vals_xgb_',experiment_name(i),'_g',string(rad),'0.txt');
-            
+
     SH = readtable(append(result_directory,datastring));
     shap_vals = [shap_vals;transpose(table2array(SH(:,2)))];
-    
+
 end
 
 shap_vals = normalize(shap_vals,2,'range');
@@ -157,7 +157,7 @@ ylabel('Importance');
 title('Contraction Features') %title('SHAP feature importance for contraction features')
 %legend(short);
 set(gca,'FontSize',16,'LineWidth',2,'Xtick',[0.5:8.5],'XTickLabel',stat,'XTickLabelRotation',45)
-    
+
 hold on
 %subplot(3,1,2)
 ax = nexttile;
@@ -171,7 +171,7 @@ ylabel('Importance');
 title('Dilation Features') %title('SHAP feature importance for dilation features')
 %legend(short);
 set(gca,'FontSize',16,'LineWidth',2,'Xtick',[0.5:8.5],'XTickLabel',stat,'XTickLabelRotation',45)
-    
+
 hold on
 %subplot(3,1,3)
 ax = nexttile;
@@ -185,9 +185,9 @@ ylabel('Importance');
 title('Shear Features') %title('SHAP feature importance for shear features')
 %legend(short);
 set(gca,'FontSize',16,'LineWidth',2,'Xtick',[0.5:8.5],'XTickLabel',stat,'XTickLabelRotation',45)
-    
+
 hold on
-sgt = sgtitle('SHAP Feature Importance for Strain Components');
+sgt = sgtitle('SHAP Values for Strain Components');
 sgt.FontSize = 18;
 
 %end
@@ -213,12 +213,12 @@ shap_imps = []; %6x27, 27/3=9 values for each feature, 6 rocktypes
 plot_list = ["FBL01","FBL02","ETNA01","ETNA02","MONZ04","MONZ05","WG01","WG02","WG04","GRS02","GRS03","ANS02","ANS03","ANS04","ANS05"]; %[Sandstone,Basalt,Monzonite,Granite,Shale,Limestone]
 
 for i = 1: length(plot_list)
-    
+
     datastring = append('Shap_vals_xgb_',plot_list(i),'_g',string(rad),'0.txt');
-            
+
     SH = readtable(append(result_directory,datastring));
     shap_vals = [shap_vals;transpose(table2array(SH(:,2)))];
-    
+
 end
 
 shap_vals = normalize(shap_vals,2,'range');
@@ -282,7 +282,7 @@ ylabel('Sum of Importances');
 %IMPORTANCE HERE IS VALUE OF NORMALIZED SHAPVALS
 %ax = nexttile;
 
-sgt = sgtitle('Cumulative SHAP Feature Importances');
+sgt = sgtitle('Cumulative SHAP Values');
 sgt.FontSize = 18;
 
 %end
@@ -302,12 +302,12 @@ shap_imps = []; %6x27, 27/3=9 values for each feature, 6 rocktypes
 plot_list = ["FBL01","FBL02","ETNA01","ETNA02","MONZ04","MONZ05","WG01","WG02","WG04","GRS02","GRS03","ANS02","ANS03","ANS04","ANS05"]; %[Sandstone,Basalt,Monzonite,Granite,Shale,Limestone]
 
 for i = 1: length(plot_list)
-    
+
     datastring = append('Shap_vals_xgb_',plot_list(i),'_g',string(rad),'0.txt');
-    
+
     SH = readtable(append(result_directory,datastring));
     shap_vals = [shap_vals;transpose(table2array(SH(:,2)))];
-    
+
 end
 
 weightstring = append('model_scores_xgb','_g',string(rad),'0.txt');
@@ -377,7 +377,7 @@ ylabel('Sum of Importances');
 %IMPORTANCE HERE IS VALUE OF NORMALIZED SHAPVALS
 %ax = nexttile;
 
-sgt = sgtitle('Weighted Cumulative SHAP Feature Importances');
+sgt = sgtitle('Weighted Cumulative SHAP Values');
 sgt.FontSize = 18;
 
 %end
@@ -407,12 +407,12 @@ new_c_order = cmap(c_ind,:);
 
 
 for i = 1: length(plot_list)
-    
+
     datastring = append('rock_type_transfer_shap_vals_xgb_',plot_list(i),'_g',string(rad),'0.txt');
-            
+
     SH = readtable(append(result_directory,datastring));
     shap_vals = [shap_vals;transpose(table2array(SH(:,2)))];
-    
+
 end
 
 weightstring = append('rock_type_transfer_learning_score_matrix_xgb_g',string(rad),'0.txt');
@@ -481,7 +481,7 @@ ylabel('Sum of Importances');
 %IMPORTANCE HERE IS VALUE OF NORMALIZED SHAPVALS
 %ax = nexttile;
 
-sgt = sgtitle('Weighted Cumulative SHAP Feature Importances');
+sgt = sgtitle('Weighted Cumulative SHAP Values');
 sgt.FontSize = 18;
 
 %end

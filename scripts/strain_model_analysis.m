@@ -31,7 +31,7 @@ for i=1:length(IDX)
     scores(2,i) = mean(table2array( M_dnn_50( IDX(i,1):IDX(i,2), 3 ) ));
     scores(3,i) = mean(table2array( M_xgb_20( IDX(i,1):IDX(i,2), 3 ) ));
     scores(4,i) = mean(table2array( M_dnn_20( IDX(i,1):IDX(i,2), 3 ) ));
-    
+
 end
 
 Big_M = [table2array( M_xgb_50(:,3) ), table2array( M_dnn_50(:,3) ), table2array( M_dnn_20(:,3) ), table2array( M_dnn_20(:,3) )];
@@ -56,7 +56,7 @@ for i=1:4
     A(6,3,i) = Big_M(14,i);
 
     A(6,4,i) = Big_M(15,i);
-    
+
 end
 
 T_dnn_20 = readtable(append(result_directory,'transfer_learning_score_matrix_dnn_g20.txt'));
@@ -72,8 +72,8 @@ T_xgb_50 = readtable(append(result_directory,'transfer_learning_score_matrix_xgb
 %hold on
 
 for i = 1: length(experiment_name)
-    
-    
+
+
     figure(i)
     resultstring = append('result_',mname,'_',experiment_name(i),'_g',string(rad),'0.txt');
     datastring = append('strains_curr_',experiment_name(i),'_g',string(rad),'0.txt');
@@ -82,7 +82,7 @@ for i = 1: length(experiment_name)
     ep = R(:,2);
     pred = R(:,1);
     x = linspace(1,length(ep),length(ep));
- 
+
     counter = [1];
     for j = 1: length(ep)-1
         if ep(j) ~= ep(j+1)
@@ -90,18 +90,18 @@ for i = 1: length(experiment_name)
         end
     end
     counter = [counter ; length(ep)];
-    
+
     ep_list = [];
     pred_means = [];
     pred_stdev = [];
-    
+
     for k = 1: length(counter)-1
         ep_list = [ep_list;counter(k)+round((counter(k+1) - counter(k))/2)];
         pred_means = [pred_means ; mean( pred( counter(k):counter(k+1) ) )];
         pred_stdev = [pred_stdev ; std( pred( counter(k):counter(k+1) ) )];
     end
-    
-    
+
+
     p = plot(x,pred, x,ep);
     set(p,{'LineWidth'},{0.7;1.3})
     p(1).Color = [0.05 0.45 0.98 0.5]; %[0.13 0.43 0.90]; [0.39 0.88 0.15]
@@ -144,4 +144,4 @@ end
 %legend('xgb','dnn');
 %ylabel('Model R^{2}');
 %set(gca,'FontSize',16,'LineWidth',2,'Xtick',[1:6],'XTickLabel',short,'XTickLabelRotation',45)
-%saveas(gcf, append(figure_directory,'Bar_Avg_Scores'), 'epsc')
+%saveas(gcf, append(figure_directory,'Bar_Avg_Scores'), 'epsc') 

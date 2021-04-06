@@ -4,6 +4,7 @@ clearvars
 %SWITCH FROM MEDIAN TO MEAN: INCOMPLETE
 
 result_directory = 'strain_model_output_MS/';
+timing_directory = 'strain_model_output_MS/stored_outputs/';
 data_directory = 'strain_data_MS/';
 figure_directory = 'strain_project_figures/';
 experiment_name = ["FBL01","FBL02","ETNA01","ETNA02","MONZ04","MONZ05","WG01","WG02","WG04","GRS02","GRS03","ANS02","ANS03","ANS04","ANS05"];
@@ -22,6 +23,8 @@ M_xgb_50 = readtable(append(result_directory,'model_scores_xgb_g50.txt'));
 rock_TT_xgb_50 = table2array(readtable(append(result_directory,'rock_type_transfer_learning_score_matrix_xgb_g50.txt')));
 
 scores = zeros(4,length(IDX));
+times = zeros(4,1);
+
 A = zeros(4,length(IDX));
 B = zeros(4,length(IDX));
 C = zeros(4,length(IDX));
@@ -32,8 +35,14 @@ for i=1:length(IDX)
     scores(2,i) = mean(table2array( M_dnn_50( IDX(i,1):IDX(i,2), 3 ) ));
     scores(3,i) = mean(table2array( M_xgb_20( IDX(i,1):IDX(i,2), 3 ) ));
     scores(4,i) = mean(table2array( M_dnn_20( IDX(i,1):IDX(i,2), 3 ) ));
-    
+
 end
+
+M_xgb_50 = readtable(append(result_directory,'model_scores_xgb_g50.txt'));
+times(1) = mean(table2array( M_xgb_50( :, 4 ) ));
+times(2) = mean(table2array( M_dnn_50( :, 4 ) ));
+times(3) = mean(table2array( M_xgb_20( :, 4 ) ));
+times(4) = mean(table2array( M_dnn_20( :, 4 ) ));
 
 Big_M = [table2array( M_xgb_50(:,3) ), table2array( M_dnn_50(:,3) ), table2array( M_dnn_20(:,3) ), table2array( M_dnn_20(:,3) )];
 A = zeros(4,4,length(IDX));
@@ -57,7 +66,7 @@ for i=1:4
     A(6,3,i) = Big_M(14,i);
 
     A(6,4,i) = Big_M(15,i);
-    
+
 end
 
 T_dnn_20 = readtable(append(result_directory,'transfer_learning_score_matrix_dnn_g20.txt'));
@@ -225,7 +234,7 @@ for i=1: length(plot_list)
     D = readtable(append(data_directory,datastring));
 
     ep = table2array(D(:,2));
-    
+
     counter = [1];
     for j = 1: length(ep)-1
         if ep(j) ~= ep(j+1)
@@ -234,7 +243,7 @@ for i=1: length(plot_list)
     end
     counter = [counter ; length(ep)];
     %last(i,1) = counter(end-1); %last(i,2) = counter(end);
-    
+
     subplot(3,1,1)
     dn_p50_end = table2array(D((counter(end-1):counter(end)),10)); 
     histogram(dn_p50_end,nbins,'BinWidth',0.3, 'Normalization','probability');
@@ -243,7 +252,7 @@ for i=1: length(plot_list)
     xlabel(' Median Contraction')
     hold on;
     legend(plot_list)
-    
+
     subplot(3,1,2)
     dp_p50_end = table2array(D((counter(end-1):counter(end)),19));
     histogram(dp_p50_end,nbins,'BinWidth',0.7, 'Normalization','probability');
@@ -252,7 +261,7 @@ for i=1: length(plot_list)
     xlabel('Median Dilation')
     hold on;
     legend(plot_list)
-    
+
     subplot(3,1,3)
     cur_p50_end = table2array(D((counter(end-1):counter(end)),28));
     histogram(cur_p50_end,nbins,'BinWidth',0.2, 'Normalization','probability');
@@ -354,7 +363,7 @@ for x = 1: length(loading_list)
 
     plot_list = ["WG04","MONZ05","FBL02","GRS03"];
     c_list = ["r","b", "r","b"];
-    
+
     for i=1: length(plot_list)
         nbins = 25;
         datastring = append('strains_curr_',plot_list(i),'_g',string(rad),'0.txt');
@@ -381,7 +390,7 @@ for x = 1: length(loading_list)
             cur_p50_end = table2array(D((counter(end-1):counter(end)),29));
         end
     end
-    
+
     for i=1: length(plot_list)
         nbins = 25;
         datastring = append('strains_curr_',plot_list(i),'_g',string(rad),'0.txt');
@@ -503,4 +512,3 @@ for x = 1: length(loading_list)
 set(gcf,'Position',[100 100 1100 1100])
 %LEGEND
 end
-
