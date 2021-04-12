@@ -84,7 +84,7 @@ saveas(gcf, figfile, 'epsc')
 
 figure()
 
-plot_list = ["ANS02","ANS03","FBL02"]; %["WG04","GRS02","ANS04"]; %["GRS03","ETNA01","MONZ05"]; %["WG01","WG02","MONZ04"];%["FBL01","FBL02","ETNA02"];%["ANS02","ANS03","ANS05"]; %experiment_name = ["FBL01","FBL02","ETNA01","ETNA02","MONZ04","MONZ05","WG01","WG02","WG04","GRS02","GRS03","ANS02","ANS03","ANS04","ANS05"];
+plot_list = ["GRS03","ETNA01","MONZ05"]; %["ANS02","ANS03","FBL02"]; %["WG04","GRS02","ANS04"]; %["WG01","WG02","MONZ04"];%["FBL01","FBL02","ETNA02"];%["ANS02","ANS03","ANS05"]; %experiment_name = ["FBL01","FBL02","ETNA01","ETNA02","MONZ04","MONZ05","WG01","WG02","WG04","GRS02","GRS03","ANS02","ANS03","ANS04","ANS05"];
 for i = 1: length(plot_list)
     resultstring = append('result_',mname,'_',plot_list(i),'_g',string(rad),'0.txt');
     resultstring2 = append('TEST_prediction_xgb_',plot_list(i),'_g',string(rad),'0.txt');

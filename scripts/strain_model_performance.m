@@ -23,7 +23,7 @@ M_xgb_50 = readtable(append(result_directory,'model_scores_xgb_g50.txt'));
 rock_TT_xgb_50 = table2array(readtable(append(result_directory,'rock_type_transfer_learning_score_matrix_xgb_g50.txt')));
 
 scores = zeros(4,length(IDX));
-times = zeros(4,1);
+times = zeros(6,1);
 
 A = zeros(4,length(IDX));
 B = zeros(4,length(IDX));
@@ -38,34 +38,39 @@ for i=1:length(IDX)
 
 end
 
-M_xgb_50 = readtable(append(result_directory,'model_scores_xgb_g50.txt'));
-times(1) = mean(table2array( M_xgb_50( :, 4 ) ));
-times(2) = mean(table2array( M_dnn_50( :, 4 ) ));
-times(3) = mean(table2array( M_xgb_20( :, 4 ) ));
-times(4) = mean(table2array( M_dnn_20( :, 4 ) ));
+M_xgb_50_nthread1 = readtable(append(timing_directory,'model_scores_xgb_g50_nthread1.txt'));
+M_xgb_50_nthread4 = readtable(append(timing_directory,'model_scores_xgb_g50_nthread4.txt'));
+M_xgb_20_nthread1 = readtable(append(timing_directory,'model_scores_xgb_g20_nthread1.txt'));
+M_xgb_20_nthread4 = readtable(append(timing_directory,'model_scores_xgb_g20_nthread4.txt'));
+times(1) = mean(table2array( M_xgb_50_nthread1( :, 4 ) ));
+times(2) = mean(table2array( M_xgb_50_nthread4( :, 4 ) ));
+times(3) = mean(table2array( M_dnn_50( :, 4 ) ));
+times(4) = mean(table2array( M_xgb_20_nthread1( :, 4 ) ));
+times(5) = mean(table2array( M_xgb_20_nthread4( :, 4 ) ));
+times(6) = mean(table2array( M_dnn_20( :, 4 ) ));
 
 Big_M = [table2array( M_xgb_50(:,3) ), table2array( M_dnn_50(:,3) ), table2array( M_dnn_20(:,3) ), table2array( M_dnn_20(:,3) )];
-A = zeros(4,4,length(IDX));
+A = zeros(4,5,length(IDX));
 %1
 for i=1:4
     A(1,1,i) = Big_M(1,i);
     A(2,1,i) = Big_M(3,i);
-    A(3,1,i) = Big_M(5,i);
+    A(3,4,i) = Big_M(5,i);
     A(4,1,i) = Big_M(7,i);
-    A(5,1,i) = Big_M(10,i);
-    A(6,1,i) = Big_M(12,i);
+    A(5,2,i) = Big_M(10,i);
+    A(6,2,i) = Big_M(12,i);
 
     A(1,2,i) = Big_M(2,i);
     A(2,2,i) = Big_M(4,i);
-    A(3,2,i) = Big_M(6,i);
+    A(3,5,i) = Big_M(6,i);
     A(4,2,i) = Big_M(8,i);
-    A(5,2,i) = Big_M(11,i);
-    A(6,2,i) = Big_M(13,i);
+    A(5,3,i) = Big_M(11,i);
+    A(6,3,i) = Big_M(13,i);
 
-    A(4,3,i) = Big_M(9,i);
-    A(6,3,i) = Big_M(14,i);
+    A(4,4,i) = Big_M(9,i);
+    A(6,4,i) = Big_M(14,i);
 
-    A(6,4,i) = Big_M(15,i);
+    A(6,5,i) = Big_M(15,i);
 
 end
 
@@ -76,7 +81,7 @@ T_xgb_50 = readtable(append(result_directory,'transfer_learning_score_matrix_xgb
 
 A(A==0)=nan;
 figure()
-set(figure(length(experiment_name)+1), 'Pos', [488, 342, 880, 480])
+set(figure(1), 'Pos', 10^3*[0.31, 0.21, 1.080, 0.48])
 
 tiledlayout(1,2)
 %subplot(1,2,1)
@@ -95,11 +100,15 @@ plot(x, A(:,3,1), 'r*')%, 'MarkerFaceColor','red'); %plot(x, A(:,3,1), 'b^', 'Ma
 hold on
 plot(x, A(:,4,1), 'r^')%, 'MarkerFaceColor','red'); %plot(x, A(:,4,1), 'k^', 'MarkerFaceColor','black');
 hold on
+plot(x, A(:,5,1), 'r+')%, 'MarkerFaceColor','red'); %plot(x, A(:,4,1), 'k^', 'MarkerFaceColor','black');
+hold on
 plot(z, A(:,2,2), 'bo')%, 'MarkerFaceColor','blue'); %plot(z, A(:,2,2), 'go', 'MarkerFaceColor','green');
 hold on
 plot(z, A(:,3,2), 'b*')%, 'MarkerFaceColor','blue'); %plot(z, A(:,3,2), 'bo', 'MarkerFaceColor','blue');
 hold on
 plot(z, A(:,4,2), 'b^')%, 'MarkerFaceColor','blue'); %plot(z, A(:,4,2), 'ko', 'MarkerFaceColor','black');
+hold on
+plot(z, A(:,5,2), 'b+')%, 'MarkerFaceColor','red'); %plot(x, A(:,4,1), 'k^', 'MarkerFaceColor','black');
 title('Test Scores on Low Resolution');
 lgd = legend('xgb','dnn','Location','southwest'); % legend('xgb','dnn', 'Location', 'southwest');
 ylabel('Model R^{2}');
@@ -121,6 +130,8 @@ plot(x, A(:,3,3), 'r*')%, 'MarkerFaceColor','red'); %plot(x, A(:,3,3), 'b^', 'Ma
 hold on
 plot(x, A(:,4,3), 'r^')%, 'MarkerFaceColor','red'); %plot(x, A(:,4,3), 'k^', 'MarkerFaceColor','black');
 hold on
+plot(x, A(:,5,3), 'r+')%, 'MarkerFaceColor','red'); %plot(x, A(:,4,3), 'k^', 'MarkerFaceColor','black');
+hold on
 plot(z, A(:,2,4), 'bo')%, 'MarkerFaceColor','blue'); %plot(z, A(:,2,4), 'go', 'MarkerFaceColor','green');
 hold on
 plot(z, A(:,3,4), 'b*')%, 'MarkerFaceColor','blue'); %plot(z, A(:,3,4), 'bo', 'MarkerFaceColor','blue');
@@ -128,11 +139,13 @@ hold on
 plot(z, A(:,4,4), 'b^')%, 'MarkerFaceColor','blue'); %plot(z, A(:,4,4), 'ko', 'MarkerFaceColor','black');
 hold on
 plot(z, A(:,1,4), 'bs')%, 'MarkerFaceColor','blue'); %plot(z, A(:,1,4), 'ro', 'MarkerFaceColor','red');
+hold on
+plot(z, A(:,5,4), 'b+')%, 'MarkerFaceColor','blue'); %plot(z, A(:,1,4), 'ro', 'MarkerFaceColor','red');
 title('Test Score on High Resolution');
 
 % lgd = legend('xgb','dnn');
-exp_names = ["Experiment 1", "Experiment 2", "Experiment 3", "Experiment 4"];
-lg  = legend(exp_names,'Orientation','Horizontal','NumColumns',4); 
+exp_names = ["Experiment 1", "Experiment 2", "Experiment 3", "Experiment 4", "Experiment 5"];
+lg  = legend(exp_names,'Orientation','Horizontal','NumColumns',5); 
 lg.Layout.Tile = 'North'; % <-- Legend placement with tiled layout
 
 ylabel('Model R^{2}');
@@ -145,7 +158,6 @@ saveas(gcf, append(figure_directory,'Model_Test_Scores_',mname,'_g',string(rad),
 % WE WANT TO HAVE MULTIPLE LEGENDS, USING TILES
 % lgd2 = legend('Exp 1', 'Exp 2', 'Exp 3', 'Exp 4','Orientation','Horizontal');
 % lgd2.Layout.Tile = "south";
-
 %rock_type_transfer
 figure()
 subplot(3,2,1)
