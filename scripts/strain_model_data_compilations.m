@@ -210,6 +210,175 @@ figfile2 = append(figure_directory,'input_data_and_model_prediction_',mname,'_g'
 saveas(gcf, figfile, 'epsc')
 saveas(gcf, figfile2, 'pdf')
 
+
+figure()
+
+plot_list = experiment_name; %["ANS02","ANS03","FBL02"]; %["WG04","GRS02","ANS04"]; %["WG01","WG02","MONZ04"];%["FBL01","FBL02","ETNA02"];%["ANS02","ANS03","ANS05"]; %experiment_name = ["FBL01","FBL02","ETNA01","ETNA02","MONZ04","MONZ05","WG01","WG02","WG04","GRS02","GRS03","ANS02","ANS03","ANS04","ANS05"];
+for i = 1: length(plot_list)
+    resultstring = append('result_',mname,'_',plot_list(i),'_g',string(rad),'0.txt');
+    resultstring2 = append('TEST_prediction_xgb_',plot_list(i),'_g',string(rad),'0.txt');
+    datastring = append('strains_curr_',plot_list(i),'_g',string(rad),'0.txt');
+    R = load(append(result_directory,resultstring));
+    R2 = load(append(result_directory,resultstring2));
+    D = readtable(append(data_directory,datastring));
+
+    ep = R(:,2);
+    pred = R(:,1);
+    ep2 = R2(:,2);
+    pred2 = R2(:,3);
+
+    dn_mean = table2array(D(:,11)); %dn_p50 = table2array(D(:,10));
+    dp_mean = table2array(D(:,20)); %dp_p50 = table2array(D(:,19));
+    cur_mean = table2array(D(:,29)); %cur_p50 = table2array(D(:,28));
+    dn_mean = dn_mean(~isnan(dn_mean)); %dn_p50 = dn_p50(~isnan(dn_p50));
+    dp_mean = dp_mean(~isnan(dp_mean)); %dp_p50 = dp_p50(~isnan(dp_p50));
+    cur_mean = cur_mean(~isnan(cur_mean)); %cur_p50 = cur_p50(~isnan(cur_p50));
+
+    x = linspace(1,length(ep),length(ep));
+
+    counter = [1];
+    for j = 1: length(ep)-1
+        if ep(j) ~= ep(j+1)
+            counter = [counter ; j];
+        end
+    end
+    counter = [counter ; length(ep)];
+
+    eps = [];
+    ep_list = [];
+    pred_means = [];
+    pred_stdev = [];
+    input_dn_mean_means = []; %input_dn_p50_means = [];
+    input_dp_mean_means = []; %input_dp_p50_means = [];
+    input_cur_mean_means = []; %input_cur_p50_means = [];
+
+    for k = 1: length(counter)-1
+        eps = [eps; ep(counter(k+1))];
+        ep_list = [ep_list;counter(k)+round((counter(k+1) - counter(k))/2)];
+        pred_means = [pred_means ; mean( pred( counter(k):counter(k+1) ) )];
+        pred_stdev = [pred_stdev ; std( pred( counter(k):counter(k+1) ) )];
+        input_dn_mean_means = [input_dn_mean_means ; mean( dn_mean( counter(k):counter(k+1) ) )];
+        input_dp_mean_means = [input_dp_mean_means ; mean( dp_mean( counter(k):counter(k+1) ) )];
+        input_cur_mean_means = [input_cur_mean_means ; mean( cur_mean( counter(k):counter(k+1) ) )];
+        %input_dn_p50_means = [input_dn_p50_means ; mean( dn_p50( counter(k):counter(k+1) ) )];
+        %input_dp_p50_means = [input_dp_p50_means ; mean( dp_p50( counter(k):counter(k+1) ) )];
+        %input_cur_p50_means = [input_cur_p50_means ; mean( cur_p50( counter(k):counter(k+1) ) )];
+    end
+    %eps = [eps;ep(counter(k+1))]
+
+    subplot(3,5,i)
+
+    plot( eps,input_dn_mean_means, '-rs' ); %plot( eps,input_dn_p50_means, '-rs' );
+    hold on
+    plot( eps,input_dp_mean_means, '-bs' ); %plot( eps,input_dp_p50_means, '-bs' );
+    hold on
+    plot( eps,input_cur_mean_means, '-gs' ); %plot( eps,input_cur_p50_means, '-gs' );
+    hold on
+
+    ax_vals = [];
+    ax_vals = [ax_vals ; max(input_dn_mean_means)]; %ax_vals = [ax_vals ; max(input_dn_p50_means)];
+    ax_vals = [ax_vals ; max(input_dp_mean_means)]; %ax_vals = [ax_vals ; max(input_dp_p50_means)];
+    ax_vals = [ax_vals ; max(input_cur_mean_means)]; %ax_vals = [ax_vals ; max(input_cur_p50_means)];
+
+    title(plot_list(i));
+    if i == 1
+        legend('Mean Contraction','Mean Dilation','Mean Shear','Location','northwest') %legend('dn\_p50','dp\_p50','cur\_p50','Location','northwest');
+    end
+    ylabel('Mean Strain Magnitude');
+    xlabel('Normalized Axial Strain');
+    axis([-0.01 eps(end)*1.02 0 1.05*max(ax_vals)])
+    %axis()
+end
+sgt = sgtitle(append('Strain Evolution of Feature Mean in All Experiments'));
+sgt.FontSize = 18;
+set(gcf,'Position',[50 50 1415 720])
+%set(gcf,'Position',[100 100 1000 2000])
+figfile = append(figure_directory,'input_data_compilation_',mname,'_g',string(rad),'0_figure')
+figfile2 = append(figure_directory,'input_data_compilation_',mname,'_g',string(rad),'0_figure');
+
+
+saveas(gcf, figfile, 'epsc')
+saveas(gcf, figfile2, 'pdf')
+
+figure()
+
+plot_list = experiment_name; %["ANS02","ANS03","FBL02"]; %["WG04","GRS02","ANS04"]; %["WG01","WG02","MONZ04"];%["FBL01","FBL02","ETNA02"];%["ANS02","ANS03","ANS05"]; %experiment_name = ["FBL01","FBL02","ETNA01","ETNA02","MONZ04","MONZ05","WG01","WG02","WG04","GRS02","GRS03","ANS02","ANS03","ANS04","ANS05"];
+for i = 1: length(plot_list)
+    resultstring = append('result_',mname,'_',plot_list(i),'_g',string(rad),'0.txt');
+    resultstring2 = append('TEST_prediction_xgb_',plot_list(i),'_g',string(rad),'0.txt');
+    datastring = append('strains_curr_',plot_list(i),'_g',string(rad),'0.txt');
+    R = load(append(result_directory,resultstring));
+    R2 = load(append(result_directory,resultstring2));
+    D = readtable(append(data_directory,datastring));
+
+    ep = R(:,2);
+    pred = R(:,1);
+    ep2 = R2(:,2);
+    pred2 = R2(:,3);
+
+    dn_mean = table2array(D(:,11)); %dn_p50 = table2array(D(:,10));
+    dp_mean = table2array(D(:,20)); %dp_p50 = table2array(D(:,19));
+    cur_mean = table2array(D(:,29)); %cur_p50 = table2array(D(:,28));
+    dn_mean = dn_mean(~isnan(dn_mean)); %dn_p50 = dn_p50(~isnan(dn_p50));
+    dp_mean = dp_mean(~isnan(dp_mean)); %dp_p50 = dp_p50(~isnan(dp_p50));
+    cur_mean = cur_mean(~isnan(cur_mean)); %cur_p50 = cur_p50(~isnan(cur_p50));
+
+    eps = [];
+    ep_list = [];
+    pred_means = [];
+    pred_stdev = [];
+
+    x2 = linspace(1,length(ep2),length(ep2));
+
+    counter = [1];
+    for j = 1: length(ep2)-1
+        if ep2(j) ~= ep2(j+1)
+            counter = [counter ; j];
+        end
+    end
+    counter = [counter ; length(ep2)];
+
+    eps2 = [];
+    ep_list2 = [];
+    pred_means2 = [];
+    pred_stdev2 = [];
+
+    for k = 1: length(counter)-1
+        eps2 = [eps2; ep2(counter(k+1))];
+        ep_list2 = [ep_list2;counter(k)+round((counter(k+1) - counter(k))/2)];
+        pred_means2 = [pred_means2 ; mean( pred2( counter(k):counter(k+1) ) )];
+        pred_stdev2 = [pred_stdev2 ; std( pred2( counter(k):counter(k+1) ) )];
+    end
+
+    subplot(3,5,i)
+    p = plot(x2,pred2, x2,ep2);
+    set(p,{'LineWidth'},{0.7;1.3})
+    p(1).Color = [0.05 0.45 0.98 0.5]; %[0.13 0.43 0.90]; [0.39 0.88 0.15]
+    p(2).Color = [0.96 0.5 0.1]; %[0.91 0.41 0.17];
+    hold on
+    errorbar(ep_list2,pred_means2,pred_stdev2,'-s','MarkerSize',5,'MarkerFaceColor',[1,0,0],'Color',[1,0,0],'LineWidth',1.3); %[0.8 0.2 0.7]
+    title(append(plot_list(i),', R^2 = ',string(round(table2array(M_xgb_50( find( contains(experiment_name,plot_list(i)) ),3)) ,2)) ));
+    if i == 1
+    legend('Model Prediction','Observed Strain','Mean Model Output','Location','northwest');
+    end 
+    ylabel('Normalized Axial Strain');
+    xlabel('Experiment Sample');
+    axis([0 length(ep2)+50 -0.05 1.05]);
+    hold on
+    hold off
+end
+sgt = sgtitle(append(cname,'Predicted Vs Observed Axial Strain in All Experiments'));
+sgt.FontSize = 18;
+set(gcf,'Position',[50 50 1415 720])
+
+%set(gcf,'Position',[100 100 1000 2000])
+figfile = append(figure_directory,'model_prediction_compilation_',mname,'_g',string(rad),'0_figure')
+figfile2 = append(figure_directory,'model_prediction_compilation_',mname,'_g',string(rad),'0_figure');
+
+
+saveas(gcf, figfile, 'epsc')
+saveas(gcf, figfile2, 'pdf')
+
 figure()
 
 plot_list = ["FBL02"]; %experiment_name = ["FBL01","FBL02","ETNA01","ETNA02","MONZ04","MONZ05","WG01","WG02","WG04","GRS02","GRS03","ANS02","ANS03","ANS04","ANS05"];
@@ -359,7 +528,8 @@ saveas(gcf, figfile2, 'pdf')
 
 figure()
 
-plot_list = ["WG04","MONZ05","FBL02","GRS03"]; %experiment_name = ["FBL01","FBL02","ETNA01","ETNA02","MONZ04","MONZ05","WG01","WG02","WG04","GRS02","GRS03","ANS02","ANS03","ANS04","ANS05"];
+%plot_list = ["WG04","MONZ05","FBL02","GRS03"]; %experiment_name = ["FBL01","FBL02","ETNA01","ETNA02","MONZ04","MONZ05","WG01","WG02","WG04","GRS02","GRS03","ANS02","ANS03","ANS04","ANS05"];
+plot_list = ["ANS02","GRS02","ETNA02","GRS03"];
 color_list = ["-rs","-bs","-gs","-ms"];
 
 for i = 1: length(plot_list)
